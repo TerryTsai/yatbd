@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+}
+.bar {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+  align-items: center;
+  background: #eee;
+  padding: 20px;
+}
+
+@media all and (max-width: 800px) {
+  .bar {
+    justify-content: space-around;
+  }
+}
+
+@media all and (max-width: 500px) {
+  .bar {
+    flex-direction: column;
+  }
+}
+
+.bar a {
+  text-decoration: none;
+  padding: 1em;
+  color: white;
+}
+
+.bar a:hover {
+  background: darken(darkgray, 2%);
+}
+
+.icon {
+
+}
+.iconsleft{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+}
+.iconsright{
+  display: flex;
+  justify-content: flex-end;
+}
+
+.title{
+  display: flex;
+  justify-content: center;
+}
