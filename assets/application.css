@@ -1,10 +1,11 @@
 * {
   margin: 0;
+  font-family: serif;
 }
 .bar {
   display: flex;
   flex-flow: row wrap;
-  justify-content: space-around;
+  justify-content: space-between;;
   align-items: center;
   background: #eee;
   padding: 20px;
@@ -29,20 +30,28 @@
 }
 
 .bar a:hover {
-  background: darken(darkgray, 2%);
+  width: 20em;
+  height: 20em;
+  background: #737373;
+  border-radius: 25em;
 }
 
-.icon {
-
-}
 .iconsleft{
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
+
 }
 .iconsright{
-  display: flex;
-  justify-content: flex-end;
+
+}
+
+input[type=text] {
+    width: 130px;
+    border: 1px solid #737373;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+    background-position: 10px 10px;
+    background-repeat: no-repeat;
+    padding: 6px 10px 6px 20px;
 }
 
 .title{
