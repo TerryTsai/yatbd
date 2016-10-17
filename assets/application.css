@@ -1,61 +1,65 @@
 * {
-  margin: 0;
-  font-family: serif;
+    margin: 0;
+    font-family: serif;
 }
 
 body {
-  background:
-              linear-gradient(to right, lightyellow, white),
-              url('img/field.jpg') no-repeat;
-  background-blend-mode: hue;
-  background-size: cover;
+    background: snow;
+    background-image: repeating-radial-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.1) 1px, transparent 0, transparent 3px), repeating-radial-gradient(rgba(0, 0, 0, 0.01), rgba(0, 0, 0, 0.1) 1px, transparent 0, transparent 2px);
+    background-position: 60px 60px, 20px 20px;
+    background-size: 40px 40px, 40px 40px;
 }
 
 .bar {
-  display: flex;
-  flex-flow: row wrap;
-  justify-content: space-between;
-  align-items: center;
-  background: white;
-  height: 2vh;
-  padding: 20px;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-between;
+    ;
+    align-items: center;
+    background: white;
+    height: 2vh;
+    padding: 20px;
 }
 
 @media all and (max-width: 800px) {
-  .bar {
-    justify-content: space-around;
-  }
+    .bar {
+        justify-content: space-around;
+    }
 }
 
 @media all and (max-width: 500px) {
-  .bar {
-    flex-direction: column;
-  }
+    .bar {
+        flex-direction: column;
+    }
+}
+
+img {
+    height: 5ew;
 }
 
 .bar a {
-  text-decoration: none;
-  padding: 1em;
-  color: black;
+    text-decoration: none;
+    padding: 1em .5em .5em;
 }
 
-.bar a:hover {
-  width: 20em;
-  height: 20em;
-  background: #eee;
-  border-radius: 25em;
+
+/*.bar a:hover .imgDescription {
+
+}*/
+
+.iconsleft a {
+    color: transparent;
+    text-shadow: 0 0 0 rgb(158, 158, 158);
 }
 
-.iconsleft{
-
-}
-.iconsright{
-
+.iconsright a {
+    color: transparent;
+    text-shadow: 0 0 0 rgb(158, 158, 158);
 }
 
 input[type=text] {
     width: 130px;
-    border: 1px solid #eee;
+    border: 1px solid rgb(158, 158, 158);
     border-radius: 4px;
     font-size: 14px;
     background-color: white;
@@ -64,7 +68,17 @@ input[type=text] {
     padding: 6px 10px 6px 20px;
 }
 
-.title{
-  display: flex;
-  justify-content: center;
+.title {
+    color: rgb(158, 158, 158);
+}
+
+.search {
+    justify-content: flex-start;
+    background-color: rgb(158, 158, 158);
+    border-radius: 5px;
+}
+
+.search a {
+    color: transparent;
+    text-shadow: 0 0 0 white;
 }
