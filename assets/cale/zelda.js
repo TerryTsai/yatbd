@@ -47,8 +47,8 @@ function setup() {
     linkTextures['rightlink5.png'],
     linkTextures['rightlink6.png']
   ], 15, 15);
+  link.show(3);
   link.fps = 9;
-  link.playAnimation([0, 6]);
   link.vx = 0;
   link.vy = 0;
 
@@ -61,7 +61,7 @@ function setup() {
       right = keyboard(39),
       down = keyboard(40);
   left.press = function() {
-    link.vx = -1.0;
+    link.vx = -1.3;
     link.vy = 0;
     link.scale.x = -1;
     link.playAnimation([14, 20]);
@@ -81,7 +81,7 @@ function setup() {
     }
   };
   up.press = function() {
-    link.vy = -1.0;
+    link.vy = -1.3;
     link.vx = 0;
     link.playAnimation([7, 13]);
   };
@@ -93,7 +93,7 @@ function setup() {
     }
   };
   right.press = function() {
-    link.vx = 1.0;
+    link.vx = 1.3;
     link.vy = 0;
     link.x += 2;
     link.playAnimation([14, 20]);
@@ -112,7 +112,7 @@ function setup() {
     }
   };
   down.press = function() {
-    link.vy = 1.0;
+    link.vy = 1.3;
     link.vx = 0;
     link.playAnimation([0, 6]);
   };
