@@ -7,7 +7,7 @@ var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
 var otherLinks = [];
-var socket = new WebSocket("ws://0.tcp.ngrok.io:15798/zeldaws");
+var socket = new WebSocket('ws://' + window.location.host + '/zeldaws');
 socket.onopen = function (event) {
 };
 
@@ -49,6 +49,9 @@ socket.onmessage = function (event) {
     }
   });
 
+  if (!linkTextures) {
+    return;
+  }
   otherLinks.forEach(function(link) {
     if (link.sprite) {
       switch(link.direction) {
@@ -61,6 +64,14 @@ socket.onmessage = function (event) {
         case 'right':
           return link.action === 'MOVE' ? walkRight(link.sprite) : standRight(link.sprite);
       }
+    } else {
+      var sprite = createLink(parseFloat(link.x), parseFloat(link.y), linkTextures);
+      sprite.show(3);
+      sprite.fps = 20;
+      sprite.vx = 0;
+      sprite.vy = 0;
+      link.sprite = sprite;
+      stage.addChild(sprite);
     }
   });
 };
@@ -72,7 +83,7 @@ setInterval(() => {
       link.sprite.y = parseFloat(link.y);
     }
   });
-}, 2000);
+}, 200);
 
 var createLink = function(x, y, linkTextures) {
   return spUtil.sprite([
@@ -125,8 +136,13 @@ var walkLeft = function(char) {
 var standLeft = function(char) {
   if (char.vy === 0) {
     char.vx = 0;
+    char.scale.x = -1;
     char.stopAnimation();
     char.show(17);
+    if (!char.isLeft) {
+      char.position.x += 20;
+      char.isLeft = true;
+    }
   }
 };
 
@@ -159,6 +175,11 @@ var standRight = function(char) {
   char.vx = 0;
   char.stopAnimation();
   char.show(17);
+  if (char.isLeft) {
+    char.position.x -= 20;
+    char.isLeft = false;
+  }
+  char.scale.x = 1;
 };
 
 var walkDown = function(char) {
@@ -182,7 +203,7 @@ function setup() {
 
   linkTextures = PIXI.loader.resources['cale/zelda/images/links.json'].textures;
 
-  link = createLink(15, 15, linkTextures);
+  link = createLink(0, 0, linkTextures);
   link.show(3);
   link.fps = 20;
   link.vx = 0;
@@ -197,47 +218,60 @@ function setup() {
       right = keyboard(39),
       down = keyboard(40);
 
+  var leftInterval, rightInterval, downInterval, upINterval;
   left.press = function() {
     walkLeft(link);
-    socket.send('MOVE,left,' + link.x + ',' + link.y);
+    leftInterval = setInterval(() => {
+      socket.send('s,MOVE,left,' + link.x + ',' + link.y);
+    }, 200);
   };
   left.release = function() {
+    clearInterval(leftInterval);
     if (!right.isDown) {
       standLeft(link);
-      socket.send('STAND,left,' + link.x + ',' + link.y);
+      socket.send('s,STAND,left,' + link.x + ',' + link.y);
     }
   };
 
   up.press = function() {
     walkUp(link);
-    socket.send('MOVE,up,' + link.x + ',' + link.y);
+    upInterval = setInterval(() => {
+      socket.send('s,MOVE,up,' + link.x + ',' + link.y);
+    }, 200);
   };
   up.release = function() {
+    clearInterval(upInterval);
     if (!down.isDown && link.vx === 0) {
       standUp(link);
-      socket.send('STAND,up,' + link.x + ',' + link.y);
+      socket.send('s,STAND,up,' + link.x + ',' + link.y);
     }
   };
 
   right.press = function() {
     walkRight(link);
-    socket.send('MOVE,right,' + link.x + ',' + link.y);
+    rightInterval = setInterval(() => {
+      socket.send('s,MOVE,right,' + link.x + ',' + link.y);
+    }, 200);
   };
   right.release = function() {
+    clearInterval(rightInterval);
     if (!left.isDown && link.vy === 0) {
       standRight(link);
-      socket.send('STAND,right,' + link.x + ',' + link.y);
+      socket.send('s,STAND,right,' + link.x + ',' + link.y);
     }
   };
 
   down.press = function() {
     walkDown(link);
-    socket.send('MOVE,down,' + link.x + ',' + link.y);
+    downInterval = setInterval(() => {
+      socket.send('s,MOVE,down,' + link.x + ',' + link.y);
+    }, 200);
   };
   down.release = function() {
+    clearInterval(downInterval);
     if (!up.isDown && link.vx === 0) {
       standDown(link);
-      socket.send('STAND,down,' + link.x + ',' + link.y);
+      socket.send('s,STAND,down,' + link.x + ',' + link.y);
     }
   };
   state = play;
@@ -250,7 +284,6 @@ function gameLoop() {
 
   state();
 
-  //Render the stage to see the animation
   renderer.render(stage);
 }
 
@@ -284,18 +317,14 @@ function play() {
   }
 
   otherLinks.forEach(function(link) {
-    if (!link.sprite) {
-      var sprite = createLink(parseFloat(link.x), parseFloat(link.y), linkTextures);
-      sprite.show(3);
-      sprite.fps = 20;
-      sprite.vx = 0;
-      sprite.vy = 0;
-      link.sprite = sprite;
-      stage.addChild(sprite);
+    if(link.x + link.vx < -link.width) {
+      link.x = 360;
+    } else if(link.x + link.vx > 360) {
+      link.x = -link.width;
+    } else {
+      link.sprite.x += link.sprite.vx;
+      link.sprite.y += link.sprite.vy;
     }
-
-    link.sprite.x += link.sprite.vx;
-    link.sprite.y += link.sprite.vy;
   });
 }
 
