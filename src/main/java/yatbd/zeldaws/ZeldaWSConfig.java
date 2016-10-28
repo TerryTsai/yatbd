@@ -11,6 +11,6 @@ public class ZeldaWSConfig implements WebSocketConfigurer {
 
     @Override
     public void registerWebSocketHandlers(WebSocketHandlerRegistry registry) {
-        registry.addHandler(new SimpleZeldaWS(), "/zeldaws");
+        registry.addHandler(new ZeldaWS(200), "/zeldaws");
     }
 }
