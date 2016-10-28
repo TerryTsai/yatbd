@@ -6,6 +6,14 @@ var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
+var exampleSocket = new WebSocket("ws://localhost:8080/zeldaws");
+exampleSocket.onopen = function (event) {
+};
+
+exampleSocket.onmessage = function (event) {
+  console.log(event.data);
+};
+
 PIXI.loader
     .add(['cale/zelda/images/kakariko.png', 'cale/zelda/images/links.json'])
     .load(setup);
@@ -65,6 +73,7 @@ function setup() {
     link.vy = 0;
     link.scale.x = -1;
     link.playAnimation([14, 20]);
+    exampleSocket.send('move,left,' + link.x + ',' + link.y);
 
     if (!link.isLeft) {
       link.position.x += 20;
@@ -78,18 +87,21 @@ function setup() {
       link.vx = 0;
       link.stopAnimation();
       link.show(17);
+      exampleSocket.send('stand,left,' + link.x + ',' + link.y);
     }
   };
   up.press = function() {
     link.vy = -1.5;
     link.vx = 0;
     link.playAnimation([7, 13]);
+    exampleSocket.send('move,up,' + link.x + ',' + link.y);
   };
   up.release = function() {
     if (!down.isDown && link.vx === 0) {
       link.vy = 0;
       link.stopAnimation();
       link.show(10);
+      exampleSocket.send('stand,up,' + link.x + ',' + link.y);
     }
   };
   right.press = function() {
@@ -97,6 +109,7 @@ function setup() {
     link.vy = 0;
     link.x += 2;
     link.playAnimation([14, 20]);
+    exampleSocket.send('move,right,' + link.x + ',' + link.y);
 
     if (link.isLeft) {
       link.position.x -= 20;
@@ -109,17 +122,20 @@ function setup() {
       link.vx = 0;
       link.stopAnimation();
       link.show(17);
+      exampleSocket.send('stand,right,' + link.x + ',' + link.y);
     }
   };
   down.press = function() {
     link.vy = 1.5;
     link.vx = 0;
     link.playAnimation([0, 6]);
+    exampleSocket.send('move,down,' + link.x + ',' + link.y);
   };
   down.release = function() {
     if (!up.isDown && link.vx === 0) {
       link.vy = 0;
       link.show(3);
+      exampleSocket.send('stand,down,' + link.x + ',' + link.y);
     }
   };
   state = play;
