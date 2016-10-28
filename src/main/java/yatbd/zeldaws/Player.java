@@ -11,8 +11,8 @@ class Player {
 
     Player() {
         this.id = MAX_ID++;
-        this.status = "IDLE";
-        this.direction = "";
+        this.status = "STAND";
+        this.direction = "down";
         this.x = 0;
         this.y = 0;
     }

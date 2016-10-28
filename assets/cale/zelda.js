@@ -6,33 +6,76 @@ var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
-var exampleSocket = new WebSocket("ws://localhost:8080/zeldaws");
-exampleSocket.onopen = function (event) {
+var otherLinks = [];
+var socket = new WebSocket("ws://0.tcp.ngrok.io:15798/zeldaws");
+socket.onopen = function (event) {
 };
 
-exampleSocket.onmessage = function (event) {
-  console.log(event.data);
+socket.onclose = function() {
+  console.log('closed');
 };
 
-PIXI.loader
-    .add(['cale/zelda/images/kakariko.png', 'cale/zelda/images/links.json'])
-    .load(setup);
+var myId;
+socket.onmessage = function (event) {
+  if (!myId) {
+    myId = event.data.split(',')[0];
+    return;
+  }
 
-var link;
-var map;
-var state;
+  var linksById = event.data
+    .split('\n')
+    .slice(0, -1)
+    .map(person => person.split(','))
+    .filter(person => person[0] !== myId)
+    .reduce((accum, person) => {
+      accum[person[0]] = {
+        id: person[0],
+        action: person[1],
+        direction: person[2],
+        x: person[3],
+        y: person[4]
+      };
+      return accum;
+    }, {});
 
-function setup() {
-  map = new Sprite(
-      resources['cale/zelda/images/kakariko.png'].texture
-  );
-  map.x = -720;
-  map.y = -720;
+  Object.keys(linksById).forEach(id => {
+    var otherLinkIndex = otherLinks.findIndex(e => e.id === id);
 
-  var linkTextures = PIXI.loader.resources['cale/zelda/images/links.json'].textures;
+    if(otherLinkIndex === -1) {
+      otherLinks.push(linksById[id]);
+    } else {
+      var oldLink = otherLinks[otherLinkIndex];
+      oldLink = Object.assign(oldLink, linksById[id]);
+    }
+  });
 
-  // link = new Sprite(linkTextures['downlink0.png']);
-  link = spUtil.sprite([
+  otherLinks.forEach(function(link) {
+    if (link.sprite) {
+      switch(link.direction) {
+        case 'up':
+          return link.action === 'MOVE' ? walkUp(link.sprite) : standUp(link.sprite);
+        case 'down':
+          return link.action === 'MOVE' ? walkDown(link.sprite) : standDown(link.sprite);
+        case 'left':
+          return link.action === 'MOVE' ? walkLeft(link.sprite) : standLeft(link.sprite);
+        case 'right':
+          return link.action === 'MOVE' ? walkRight(link.sprite) : standRight(link.sprite);
+      }
+    }
+  });
+};
+
+setInterval(() => {
+  otherLinks.forEach(function(link) {
+    if (link.sprite) {
+      link.sprite.x = parseFloat(link.x);
+      link.sprite.y = parseFloat(link.y);
+    }
+  });
+}, 2000);
+
+var createLink = function(x, y, linkTextures) {
+  return spUtil.sprite([
     linkTextures['downlink0.png'],
     linkTextures['downlink1.png'],
     linkTextures['downlink2.png'],
@@ -54,7 +97,92 @@ function setup() {
     linkTextures['rightlink4.png'],
     linkTextures['rightlink5.png'],
     linkTextures['rightlink6.png']
-  ], 15, 15);
+  ], x, y);
+};
+
+PIXI.loader
+    .add(['cale/zelda/images/kakariko.png', 'cale/zelda/images/links.json'])
+    .load(setup);
+
+var link;
+var map;
+var state;
+
+var walkLeft = function(char) {
+  char.vx = -1.5;
+  char.vy = 0;
+  char.scale.x = -1;
+  char.playAnimation([14, 20]);
+
+  if (!char.isLeft) {
+    char.position.x += 20;
+    char.isLeft = true;
+  }
+
+  char.x += 2;
+};
+
+var standLeft = function(char) {
+  if (char.vy === 0) {
+    char.vx = 0;
+    char.stopAnimation();
+    char.show(17);
+  }
+};
+
+var walkUp = function(char) {
+  char.vy = -1.5;
+  char.vx = 0;
+  char.playAnimation([7, 13]);
+};
+
+var standUp = function(char) {
+  char.vy = 0;
+  char.stopAnimation();
+  char.show(10);
+};
+
+var walkRight = function(char) {
+  char.vx = 1.5;
+  char.vy = 0;
+  char.x += 2;
+  char.playAnimation([14, 20]);
+
+  if (char.isLeft) {
+    char.position.x -= 20;
+    char.isLeft = false;
+  }
+  char.scale.x = 1;
+};
+
+var standRight = function(char) {
+  char.vx = 0;
+  char.stopAnimation();
+  char.show(17);
+};
+
+var walkDown = function(char) {
+  char.vy = 1.5;
+  char.vx = 0;
+  char.playAnimation([0, 6]);
+};
+
+var standDown = function(char) {
+  char.vy = 0;
+  char.show(3);
+};
+
+var linkTextures;
+function setup() {
+  map = new Sprite(
+    resources['cale/zelda/images/kakariko.png'].texture
+  );
+  map.x = -720;
+  map.y = -720;
+
+  linkTextures = PIXI.loader.resources['cale/zelda/images/links.json'].textures;
+
+  link = createLink(15, 15, linkTextures);
   link.show(3);
   link.fps = 20;
   link.vx = 0;
@@ -68,74 +196,48 @@ function setup() {
       up = keyboard(38),
       right = keyboard(39),
       down = keyboard(40);
+
   left.press = function() {
-    link.vx = -1.5;
-    link.vy = 0;
-    link.scale.x = -1;
-    link.playAnimation([14, 20]);
-    exampleSocket.send('move,left,' + link.x + ',' + link.y);
-
-    if (!link.isLeft) {
-      link.position.x += 20;
-      link.isLeft = true;
-    }
-
-    link.x += 2;
+    walkLeft(link);
+    socket.send('MOVE,left,' + link.x + ',' + link.y);
   };
   left.release = function() {
-    if (!right.isDown && link.vy === 0) {
-      link.vx = 0;
-      link.stopAnimation();
-      link.show(17);
-      exampleSocket.send('stand,left,' + link.x + ',' + link.y);
+    if (!right.isDown) {
+      standLeft(link);
+      socket.send('STAND,left,' + link.x + ',' + link.y);
     }
   };
+
   up.press = function() {
-    link.vy = -1.5;
-    link.vx = 0;
-    link.playAnimation([7, 13]);
-    exampleSocket.send('move,up,' + link.x + ',' + link.y);
+    walkUp(link);
+    socket.send('MOVE,up,' + link.x + ',' + link.y);
   };
   up.release = function() {
     if (!down.isDown && link.vx === 0) {
-      link.vy = 0;
-      link.stopAnimation();
-      link.show(10);
-      exampleSocket.send('stand,up,' + link.x + ',' + link.y);
+      standUp(link);
+      socket.send('STAND,up,' + link.x + ',' + link.y);
     }
   };
-  right.press = function() {
-    link.vx = 1.5;
-    link.vy = 0;
-    link.x += 2;
-    link.playAnimation([14, 20]);
-    exampleSocket.send('move,right,' + link.x + ',' + link.y);
 
-    if (link.isLeft) {
-      link.position.x -= 20;
-      link.isLeft = false;
-    }
-    link.scale.x = 1;
+  right.press = function() {
+    walkRight(link);
+    socket.send('MOVE,right,' + link.x + ',' + link.y);
   };
   right.release = function() {
     if (!left.isDown && link.vy === 0) {
-      link.vx = 0;
-      link.stopAnimation();
-      link.show(17);
-      exampleSocket.send('stand,right,' + link.x + ',' + link.y);
+      standRight(link);
+      socket.send('STAND,right,' + link.x + ',' + link.y);
     }
   };
+
   down.press = function() {
-    link.vy = 1.5;
-    link.vx = 0;
-    link.playAnimation([0, 6]);
-    exampleSocket.send('move,down,' + link.x + ',' + link.y);
+    walkDown(link);
+    socket.send('MOVE,down,' + link.x + ',' + link.y);
   };
   down.release = function() {
     if (!up.isDown && link.vx === 0) {
-      link.vy = 0;
-      link.show(3);
-      exampleSocket.send('stand,down,' + link.x + ',' + link.y);
+      standDown(link);
+      socket.send('STAND,down,' + link.x + ',' + link.y);
     }
   };
   state = play;
@@ -180,6 +282,21 @@ function play() {
   } else {
     link.y += link.vy;
   }
+
+  otherLinks.forEach(function(link) {
+    if (!link.sprite) {
+      var sprite = createLink(parseFloat(link.x), parseFloat(link.y), linkTextures);
+      sprite.show(3);
+      sprite.fps = 20;
+      sprite.vx = 0;
+      sprite.vy = 0;
+      link.sprite = sprite;
+      stage.addChild(sprite);
+    }
+
+    link.sprite.x += link.sprite.vx;
+    link.sprite.y += link.sprite.vy;
+  });
 }
 
 function keyboard(keyCode) {
@@ -206,10 +323,10 @@ function keyboard(keyCode) {
     }
   };
   window.addEventListener(
-      "keydown", key.downHandler.bind(key), false
+    "keydown", key.downHandler.bind(key), false
   );
   window.addEventListener(
-      "keyup", key.upHandler.bind(key), false
+    "keyup", key.upHandler.bind(key), false
   );
   return key;
 }
