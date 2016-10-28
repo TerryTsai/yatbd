@@ -17,13 +17,13 @@ class Player {
         this.y = 0;
     }
 
-    void update(String rawData) {
-        String[] data = rawData.split(",");
-
-        this.status = data[0];
-        this.direction = data[1];
-        this.x = Float.parseFloat(data[2]);
-        this.y = Float.parseFloat(data[3]);
+    void update(String[] data) {
+        if (data[0].equals("s")) {
+            this.status = data[1];
+            this.direction = data[2];
+            this.x = Float.parseFloat(data[3]);
+            this.y = Float.parseFloat(data[4]);
+        }
     }
 
     @Override

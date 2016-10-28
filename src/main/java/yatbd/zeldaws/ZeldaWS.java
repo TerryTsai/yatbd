@@ -11,9 +11,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.function.BinaryOperator;
 
-class ZeldaWS extends TextWebSocketHandler {
+final class ZeldaWS extends TextWebSocketHandler {
 
     private final Map<WebSocketSession, Player> sessions = new ConcurrentHashMap<>();
     private final ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
@@ -25,20 +24,10 @@ class ZeldaWS extends TextWebSocketHandler {
 
             // CSV format
             StringBuilder state = new StringBuilder();
-            for (Player player : sessions.values()) {
+            for (Player player : sessions.values())
                 state.append(player.toString()).append("\n");
-            }
 
-            TextMessage message = new TextMessage(state.toString());
-
-            // Send to each player
-            for (WebSocketSession session : sessions.keySet()) {
-                try {
-                    session.sendMessage(message);
-                } catch (IOException e) {
-                    System.out.println("FAILED BROADCAST TO " + session.toString());
-                }
-            }
+            broadcast(state.toString());
 
         }, 0, broadcastPeriodInMilliseconds, TimeUnit.MILLISECONDS);
 
@@ -60,11 +49,23 @@ class ZeldaWS extends TextWebSocketHandler {
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) throws Exception {
 
-        Player player = sessions.get(session);
-
-        player.update(message.getPayload());
-
         System.out.println("MESSAGE " + message.toString());
+
+        String[] data = message.getPayload().split(",");
+
+        switch (data[0]) {
+            case "s":
+                Player player = sessions.get(session);
+                player.update(data);
+                break;
+
+            case "c":
+                broadcast(data[1]);
+                break;
+
+            default:
+                System.out.println("UNKNOWN COMMAND");
+        }
 
     }
 
@@ -76,6 +77,20 @@ class ZeldaWS extends TextWebSocketHandler {
         sessions.remove(session);
 
         System.out.println("DISCONNECTED " + player.toString());
+
+    }
+
+    private void broadcast(String message) {
+
+        TextMessage textMessage = new TextMessage(message);
+
+        for (WebSocketSession session : sessions.keySet()) {
+            try {
+                session.sendMessage(textMessage);
+            } catch (IOException e) {
+                System.out.println("FAILED BROADCAST TO " + session.toString());
+            }
+        }
 
     }
 
