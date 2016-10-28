@@ -1,3 +1,6 @@
+var PIXI = require('pixi.js');
+var SpriteUtilities = require('./spriteUtilities');
+
 var resources = PIXI.loader.resources;
 var Sprite = PIXI.Sprite;
 
