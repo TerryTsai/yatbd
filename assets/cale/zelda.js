@@ -10,55 +10,8 @@ var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
-var myId, link, map, state, linkTextures;
+var link, map, state;
 var otherLinks = [];
-var socket = new WebSocket('ws://' + window.location.host + '/zeldaws');
-
-socket.onclose = function() {
-  console.log('closed');
-};
-
-socket.onmessage = function (event) {
-  if (!myId) {
-    myId = event.data.split(',')[0];
-    return;
-  }
-
-  var linksById = deserializeFromServer(event.data, myId);
-
-  Object.keys(linksById).forEach(id => {
-    var otherLinkIndex = otherLinks.findIndex(e => e.id === id);
-
-    if(otherLinkIndex === -1) {
-      otherLinks.push(linksById[id]);
-    } else {
-      var oldLink = otherLinks[otherLinkIndex];
-      oldLink = Object.assign(oldLink, linksById[id]);
-    }
-  });
-
-  if (!linkTextures) {
-    return;
-  }
-  otherLinks.forEach(function(link) {
-    if (link.sprite) {
-      switch(link.direction) {
-        case 'up':
-          return link.action === 'MOVE' ? actions.walkUp(link.sprite) : actions.standUp(link.sprite);
-        case 'down':
-          return link.action === 'MOVE' ? actions.walkDown(link.sprite) : actions.standDown(link.sprite);
-        case 'left':
-          return link.action === 'MOVE' ? actions.walkLeft(link.sprite) : actions.standLeft(link.sprite);
-        case 'right':
-          return link.action === 'MOVE' ? actions.walkRight(link.sprite) : actions.standRight(link.sprite);
-      }
-    } else {
-      var sprite = linkSpriteFactory(parseFloat(link.x), parseFloat(link.y), linkTextures);
-      link.sprite = sprite;
-      stage.addChild(sprite);
-    }
-  });
-};
 
 PIXI.loader
     .add(['cale/images/kakariko.png', 'cale/images/links.json'])
@@ -71,7 +24,8 @@ function setup() {
   map.x = -720;
   map.y = -720;
 
-  linkTextures = PIXI.loader.resources['cale/images/links.json'].textures;
+  var linkTextures = PIXI.loader.resources['cale/images/links.json'].textures;
+  var socket = require('./util/socket').createSocket(otherLinks, stage, linkTextures);
 
   link = linkSpriteFactory(0, 0, linkTextures);
 
@@ -94,7 +48,7 @@ function gameLoop() {
 }
 
 function update() {
-  linkUpdate.updateOwnLink(link);
+  linkUpdate.updateOwnLink(link, map);
 
   otherLinks.forEach(function(link) {
     if (link.sprite) {

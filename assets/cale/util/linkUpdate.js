@@ -1,4 +1,4 @@
-exports.updateOwnLink = function(link) {
+exports.updateOwnLink = function(link, map) {
   if(link.x + link.vx < -link.width) {
     if (map.x < 0) {
       map.x += 360;
