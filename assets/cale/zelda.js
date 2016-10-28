@@ -1,12 +1,13 @@
 var resources = PIXI.loader.resources;
 var Sprite = PIXI.Sprite;
 
+var spUtil = new SpriteUtilities(PIXI);
 var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
 PIXI.loader
-    .add(['cale/zelda/images/kakariko.png', 'cale/zelda/images/links-0.json'])
+    .add(['cale/zelda/images/kakariko.png', 'cale/zelda/images/links.json'])
     .load(setup);
 
 var link;
@@ -19,17 +20,39 @@ function setup() {
   );
   map.x = -720;
   map.y = -720;
-  map.scale = new PIXI.Point(2, 2);
 
-  var linkTextures = PIXI.loader.resources['cale/zelda/images/links-0.json'].textures;
+  var linkTextures = PIXI.loader.resources['cale/zelda/images/links.json'].textures;
 
-  link = new Sprite(linkTextures['poop_01.png']);
-  link.scale = new PIXI.Point(2, 2);
-  link.x = 15;
-  link.y = 15;
+  // link = new Sprite(linkTextures['downlink0.png']);
+  link = spUtil.sprite([
+    linkTextures['downlink0.png'],
+    linkTextures['downlink1.png'],
+    linkTextures['downlink2.png'],
+    linkTextures['downlink3.png'],
+    linkTextures['downlink4.png'],
+    linkTextures['downlink5.png'],
+    linkTextures['downlink6.png'],
+    linkTextures['uplink0.png'],
+    linkTextures['uplink1.png'],
+    linkTextures['uplink2.png'],
+    linkTextures['uplink3.png'],
+    linkTextures['uplink4.png'],
+    linkTextures['uplink5.png'],
+    linkTextures['uplink6.png'],
+    linkTextures['rightlink0.png'],
+    linkTextures['rightlink1.png'],
+    linkTextures['rightlink2.png'],
+    linkTextures['rightlink3.png'],
+    linkTextures['rightlink4.png'],
+    linkTextures['rightlink5.png'],
+    linkTextures['rightlink6.png']
+  ], 15, 15);
+  link.fps = 9;
+  link.playAnimation([0, 6]);
   link.vx = 0;
   link.vy = 0;
 
+  stage.scale = new PIXI.Point(2, 2);
   stage.addChild(map);
   stage.addChild(link);
 
@@ -38,43 +61,65 @@ function setup() {
       right = keyboard(39),
       down = keyboard(40);
   left.press = function() {
-    link.vx = -5;
+    link.vx = -1.0;
     link.vy = 0;
-    link.texture = linkTextures['poop_01.png'];
+    link.scale.x = -1;
+    link.playAnimation([14, 20]);
+
+    if (!link.isLeft) {
+      link.position.x += 20;
+      link.isLeft = true;
+    }
+
+    link.x += 2;
   };
   left.release = function() {
     if (!right.isDown && link.vy === 0) {
       link.vx = 0;
+      link.stopAnimation();
+      link.show(17);
     }
   };
   up.press = function() {
-    link.vy = -5;
+    link.vy = -1.0;
     link.vx = 0;
-    link.texture = linkTextures['poop_88.png'];
+    link.playAnimation([7, 13]);
   };
   up.release = function() {
     if (!down.isDown && link.vx === 0) {
       link.vy = 0;
+      link.stopAnimation();
+      link.show(10);
     }
   };
   right.press = function() {
-    link.vx = 5;
+    link.vx = 1.0;
     link.vy = 0;
-    link.texture = linkTextures['poop_96.png'];
+    link.x += 2;
+    link.playAnimation([14, 20]);
+
+    if (link.isLeft) {
+      link.position.x -= 20;
+      link.isLeft = false;
+    }
+    link.scale.x = 1;
   };
   right.release = function() {
     if (!left.isDown && link.vy === 0) {
       link.vx = 0;
+      link.stopAnimation();
+      link.show(17);
     }
   };
   down.press = function() {
-    link.vy = 5;
+    link.vy = 1.0;
     link.vx = 0;
-    link.texture = linkTextures['poop_01.png'];
+    link.playAnimation([0, 6]);
   };
   down.release = function() {
     if (!up.isDown && link.vx === 0) {
       link.vy = 0;
+      link.show(3);
     }
   };
   state = play;
@@ -94,12 +139,12 @@ function gameLoop() {
 function play() {
   if(link.x + link.vx < -link.width) {
     if (map.x < 0) {
-      map.x += 720;
-      link.x = 720;
+      map.x += 360;
+      link.x = 360;
     }
-  } else if(link.x + link.vx > 720) {
-    if (map.x > -1440) {
-      map.x -= 720;
+  } else if(link.x + link.vx > 360) {
+    if (map.x > -720) {
+      map.x -= 360;
       link.x = -link.width;
     }
   } else {
@@ -108,12 +153,12 @@ function play() {
 
   if(link.y + link.vy < -link.height) {
     if (map.y < 0) {
-      map.y += 720;
-      link.y = 720;
+      map.y += 360;
+      link.y = 360;
     }
-  } else if(link.y + link.vy > 720) {
-    if (map.y > -1440) {
-      map.y -= 720;
+  } else if(link.y + link.vy > 360) {
+    if (map.y > -720) {
+      map.y -= 360;
       link.y = -link.height;
     }
   } else {
