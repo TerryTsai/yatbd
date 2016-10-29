@@ -22,12 +22,7 @@ final class ZeldaWS extends TextWebSocketHandler {
         // Broadcast state at regular interval
         executor.scheduleAtFixedRate(() -> {
 
-            // CSV format
-            StringBuilder state = new StringBuilder();
-            for (Player player : sessions.values())
-                state.append(player.toString()).append("\n");
-
-            broadcast(state.toString());
+            broadcastGameState();
 
         }, 0, broadcastPeriodInMilliseconds, TimeUnit.MILLISECONDS);
 
@@ -57,6 +52,7 @@ final class ZeldaWS extends TextWebSocketHandler {
             case "s":
                 Player player = sessions.get(session);
                 player.update(data);
+                broadcastGameState();
                 break;
 
             case "c":
@@ -78,6 +74,15 @@ final class ZeldaWS extends TextWebSocketHandler {
 
         System.out.println("DISCONNECTED " + player.toString());
 
+    }
+
+    private void broadcastGameState() {
+      // CSV Format
+      StringBuilder state = new StringBuilder();
+      for (Player player : sessions.values())
+          state.append(player.toString()).append("\n");
+
+      broadcast(state.toString());
     }
 
     private void broadcast(String message) {

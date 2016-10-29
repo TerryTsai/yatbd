@@ -25,6 +25,8 @@ exports.createSocket = function(stage, linkTextures) {
 
     otherLinkUtil.getAll(otherLinks).forEach(function(link) {
       if (link.sprite) {
+        link.sprite.x = parseFloat(link.x);
+        link.sprite.y = parseFloat(link.y);
         switch(link.direction) {
           case 'up':
             return link.action === 'MOVE' ? actions.walkUp(link.sprite) : actions.standUp(link.sprite);

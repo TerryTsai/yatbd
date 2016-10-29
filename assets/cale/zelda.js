@@ -57,12 +57,3 @@ function update() {
     }
   });
 }
-
-setInterval(() => {
-  getAll(getOtherLinks()).forEach(function(link) {
-    if (link.sprite) {
-      link.sprite.x = parseFloat(link.x);
-      link.sprite.y = parseFloat(link.y);
-    }
-  });
-}, 200);

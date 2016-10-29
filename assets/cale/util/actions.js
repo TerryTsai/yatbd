@@ -4,7 +4,9 @@ sprite.walkLeft = function(char) {
   char.vx = -1.5;
   char.vy = 0;
   char.scale.x = -1;
-  char.playAnimation([14, 20]);
+  if (!char.animating) {
+    char.playAnimation([14, 20]);
+  }
 
   if (!char.isLeft) {
     char.position.x += 20;
@@ -30,7 +32,9 @@ sprite.standLeft = function(char) {
 sprite.walkUp = function(char) {
   char.vy = -1.5;
   char.vx = 0;
-  char.playAnimation([7, 13]);
+  if (!char.animating) {
+    char.playAnimation([7, 13]);
+  }
 };
 
 sprite.standUp = function(char) {
@@ -43,7 +47,9 @@ sprite.walkRight = function(char) {
   char.vx = 1.5;
   char.vy = 0;
   char.x += 2;
-  char.playAnimation([14, 20]);
+  if (!char.animating) {
+    char.playAnimation([14, 20]);
+  }
 
   if (char.isLeft) {
     char.position.x -= 20;
@@ -66,11 +72,14 @@ sprite.standRight = function(char) {
 sprite.walkDown = function(char) {
   char.vy = 1.5;
   char.vx = 0;
-  char.playAnimation([0, 6]);
+  if (!char.animating) {
+    char.playAnimation([0, 6]);
+  }
 };
 
 sprite.standDown = function(char) {
   char.vy = 0;
+  char.stopAnimation();
   char.show(3);
 };
 
