@@ -1,10 +1,13 @@
 var actions = require('./actions');
 var deserializeFromServer = require('./deserializer');
 var linkSpriteFactory = require('./linkSpriteFactory');
+var otherLinkUtil = require('./otherLinks');
 
 var socket, myId;
 
-exports.createSocket = function(otherLinks, stage, linkTextures) {
+var otherLinks = {};
+
+exports.createSocket = function(stage, linkTextures) {
   socket = new WebSocket('ws://' + window.location.host + '/zeldaws');
 
   socket.onclose = function() {
@@ -17,20 +20,10 @@ exports.createSocket = function(otherLinks, stage, linkTextures) {
       return;
     }
 
-    var linksById = deserializeFromServer(event.data, myId);
+    var newLinks = deserializeFromServer(event.data, myId);
+    otherLinks = otherLinkUtil.updateLinks(otherLinks, newLinks, stage);
 
-    Object.keys(linksById).forEach(id => {
-      var otherLinkIndex = otherLinks.findIndex(e => e.id === id);
-
-      if(otherLinkIndex === -1) {
-        otherLinks.push(linksById[id]);
-      } else {
-        var oldLink = otherLinks[otherLinkIndex];
-        oldLink = Object.assign(oldLink, linksById[id]);
-      }
-    });
-
-    otherLinks.forEach(function(link) {
+    otherLinkUtil.getAll(otherLinks).forEach(function(link) {
       if (link.sprite) {
         switch(link.direction) {
           case 'up':
@@ -43,16 +36,16 @@ exports.createSocket = function(otherLinks, stage, linkTextures) {
             return link.action === 'MOVE' ? actions.walkRight(link.sprite) : actions.standRight(link.sprite);
         }
       } else {
-        var sprite = linkSpriteFactory(parseFloat(link.x), parseFloat(link.y), linkTextures);
-        sprite.show(3);
-        sprite.fps = 20;
-        link.sprite = sprite;
-        stage.addChild(sprite);
+        link.sprite = linkSpriteFactory(parseFloat(link.x), parseFloat(link.y), linkTextures);
+        stage.addChild(link.sprite);
       }
     });
   };
 
   return socket;
-}
+};
 
 exports.socket = socket;
+exports.getOtherLinks = function() {
+  return otherLinks;
+};

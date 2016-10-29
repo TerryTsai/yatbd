@@ -5,13 +5,14 @@ var linkUpdate = require('./util/linkUpdate');
 var actions = require('./util/actions');
 var linkSpriteFactory = require('./util/linkSpriteFactory');
 var deserializeFromServer = require('./util/deserializer');
+var getAll = require('./util/otherLinks').getAll;
+var getOtherLinks = require('./util/socket').getOtherLinks;
 
 var stage = new PIXI.Container();
 var renderer = PIXI.autoDetectRenderer(720, 720);
 document.body.appendChild(renderer.view);
 
 var link, map, state;
-var otherLinks = [];
 
 PIXI.loader
     .add(['cale/images/kakariko.png', 'cale/images/links.json'])
@@ -25,7 +26,7 @@ function setup() {
   map.y = -720;
 
   var linkTextures = PIXI.loader.resources['cale/images/links.json'].textures;
-  var socket = require('./util/socket').createSocket(otherLinks, stage, linkTextures);
+  var socket = require('./util/socket').createSocket(stage, linkTextures);
 
   link = linkSpriteFactory(0, 0, linkTextures);
 
@@ -50,7 +51,7 @@ function gameLoop() {
 function update() {
   linkUpdate.updateOwnLink(link, map);
 
-  otherLinks.forEach(function(link) {
+  getAll(getOtherLinks()).forEach(function(link) {
     if (link.sprite) {
       linkUpdate.updateOtherLink(link.sprite);
     }
@@ -58,7 +59,7 @@ function update() {
 }
 
 setInterval(() => {
-  otherLinks.forEach(function(link) {
+  getAll(getOtherLinks()).forEach(function(link) {
     if (link.sprite) {
       link.sprite.x = parseFloat(link.x);
       link.sprite.y = parseFloat(link.y);
