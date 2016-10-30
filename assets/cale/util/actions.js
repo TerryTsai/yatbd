@@ -1,6 +1,6 @@
 var sprite = {};
 
-var swingSword = function(char, startFrame, endFrame, standFrame, fps) {
+var swingSword = function(char, startFrame, endFrame, standFrame, fps, cb) {
   char.loop = false;
   char.fps = fps;
   char.playAnimation([startFrame, endFrame]);
@@ -10,6 +10,9 @@ var swingSword = function(char, startFrame, endFrame, standFrame, fps) {
       char.loop = true;
       char.fps = 20;
       char.show(standFrame);
+      if (cb) {
+        cb();
+      }
     }
   });
 };
@@ -31,8 +34,8 @@ sprite.standLeft = function(char) {
   }
 };
 
-sprite.swingSwordLeft = function(char) {
-  swingSword(char, 52, 60, 24, 33);
+sprite.swingSwordLeft = function(char, cb) {
+  swingSword(char, 52, 60, 24, 33, cb);
 };
 
 sprite.walkUp = function(char) {
@@ -50,8 +53,8 @@ sprite.standUp = function(char) {
   char.show(10);
 };
 
-sprite.swingSwordUp = function(char) {
-  swingSword(char, 34, 43, 10, 33);
+sprite.swingSwordUp = function(char, cb) {
+  swingSword(char, 34, 43, 10, 33, cb);
 };
 
 sprite.walkRight = function(char) {
@@ -69,8 +72,8 @@ sprite.standRight = function(char) {
   char.show(17);
 };
 
-sprite.swingSwordRight = function(char) {
-  swingSword(char, 43, 52, 17, 33);
+sprite.swingSwordRight = function(char, cb) {
+  swingSword(char, 43, 52, 17, 33, cb);
 };
 
 sprite.walkDown = function(char) {
@@ -88,8 +91,8 @@ sprite.standDown = function(char) {
   char.show(3);
 };
 
-sprite.swingSwordDown = function(char) {
-  swingSword(char, 28, 34, 3, 23);
+sprite.swingSwordDown = function(char, cb) {
+  swingSword(char, 28, 34, 3, 23, cb);
 };
 
 module.exports = sprite;

@@ -31,13 +31,21 @@ exports.createSocket = function(stage, linkTextures) {
         link.sprite.mapY = parseInt(link.mapY);
         switch(link.direction) {
           case 'up':
-            return link.action === 'MOVE' ? actions.walkUp(link.sprite) : actions.standUp(link.sprite);
+            return link.action === 'MOVE'
+              ? actions.walkUp(link.sprite)
+              : link.action === 'STAND' ? actions.standUp(link.sprite) : actions.swingSwordUp(link.sprite);
           case 'down':
-            return link.action === 'MOVE' ? actions.walkDown(link.sprite) : actions.standDown(link.sprite);
+            return link.action === 'MOVE'
+              ? actions.walkDown(link.sprite)
+              : link.action === 'STAND' ? actions.standDown(link.sprite) : actions.swingSwordDown(link.sprite);
           case 'left':
-            return link.action === 'MOVE' ? actions.walkLeft(link.sprite) : actions.standLeft(link.sprite);
+            return link.action === 'MOVE'
+              ? actions.walkLeft(link.sprite)
+              : link.action === 'STAND' ? actions.standLeft(link.sprite) : actions.swingSwordLeft(link.sprite);
           case 'right':
-            return link.action === 'MOVE' ? actions.walkRight(link.sprite) : actions.standRight(link.sprite);
+            return link.action === 'MOVE'
+              ? actions.walkRight(link.sprite)
+              : link.action === 'STAND' ? actions.standRight(link.sprite) : actions.swingSwordRight(link.sprite);
         }
       } else {
         link.sprite = linkSpriteFactory(parseFloat(link.x), parseFloat(link.y), linkTextures);

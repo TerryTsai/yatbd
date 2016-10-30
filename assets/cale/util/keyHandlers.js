@@ -73,16 +73,28 @@ module.exports = function(socket, link) {
   space.press = function() {
     switch(link.direction) {
       case 'up':
-        actions.swingSwordUp(link);
+        sendSocketUpdate(socket, 'SWING_SWORD', 'up', link);
+        actions.swingSwordUp(link, function() {
+          sendSocketUpdate(socket, 'STAND', 'up', link);
+        });
         break;
       case 'down':
-        actions.swingSwordDown(link);
+        sendSocketUpdate(socket, 'SWING_SWORD', 'down', link);
+        actions.swingSwordDown(link, function() {
+          sendSocketUpdate(socket, 'STAND', 'down', link);
+        });
         break;
       case 'left':
-        actions.swingSwordLeft(link);
+        sendSocketUpdate(socket, 'SWING_SWORD', 'left', link);
+        actions.swingSwordLeft(link, function() {
+          sendSocketUpdate(socket, 'STAND', 'left', link);
+        });
         break;
       case 'right':
-        actions.swingSwordRight(link);
+        sendSocketUpdate(socket, 'SWING_SWORD', 'right', link);
+        actions.swingSwordRight(link, function() {
+          sendSocketUpdate(socket, 'STAND', 'right', link);
+        });
         break;
     }
   };
