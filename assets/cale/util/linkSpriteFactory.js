@@ -24,7 +24,47 @@ module.exports = function(x, y, linkTextures) {
     linkTextures['rightlink3.png'],
     linkTextures['rightlink4.png'],
     linkTextures['rightlink5.png'],
-    linkTextures['rightlink6.png']
+    linkTextures['rightlink6.png'],
+    linkTextures['leftlink0.png'],
+    linkTextures['leftlink1.png'],
+    linkTextures['leftlink2.png'],
+    linkTextures['leftlink3.png'],
+    linkTextures['leftlink4.png'],
+    linkTextures['leftlink5.png'],
+    linkTextures['leftlink6.png'],
+    linkTextures['downlinkswordswing0.png'],
+    linkTextures['downlinkswordswing1.png'],
+    linkTextures['downlinkswordswing2.png'],
+    linkTextures['downlinkswordswing3.png'],
+    linkTextures['downlinkswordswing4.png'],
+    linkTextures['downlinkswordswing5.png'],
+    linkTextures['uplinkswordswing0.png'],
+    linkTextures['uplinkswordswing1.png'],
+    linkTextures['uplinkswordswing2.png'],
+    linkTextures['uplinkswordswing3.png'],
+    linkTextures['uplinkswordswing4.png'],
+    linkTextures['uplinkswordswing5.png'],
+    linkTextures['uplinkswordswing6.png'],
+    linkTextures['uplinkswordswing7.png'],
+    linkTextures['uplinkswordswing8.png'],
+    linkTextures['rightlinkswordswing0.png'],
+    linkTextures['rightlinkswordswing1.png'],
+    linkTextures['rightlinkswordswing2.png'],
+    linkTextures['rightlinkswordswing3.png'],
+    linkTextures['rightlinkswordswing4.png'],
+    linkTextures['rightlinkswordswing5.png'],
+    linkTextures['rightlinkswordswing6.png'],
+    linkTextures['rightlinkswordswing7.png'],
+    linkTextures['rightlinkswordswing8.png'],
+    linkTextures['leftlinkswordswing0.png'],
+    linkTextures['leftlinkswordswing1.png'],
+    linkTextures['leftlinkswordswing2.png'],
+    linkTextures['leftlinkswordswing3.png'],
+    linkTextures['leftlinkswordswing4.png'],
+    linkTextures['leftlinkswordswing5.png'],
+    linkTextures['leftlinkswordswing6.png'],
+    linkTextures['leftlinkswordswing7.png'],
+    linkTextures['leftlinkswordswing8.png']
   ], x, y);
   sprite.show(3);
   sprite.fps = 20;
@@ -32,6 +72,7 @@ module.exports = function(x, y, linkTextures) {
   sprite.vy = 0;
   sprite.mapX = 0;
   sprite.mapY = 0;
+  sprite.direction = 'down';
 
   return sprite;
 };

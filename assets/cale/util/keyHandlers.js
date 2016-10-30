@@ -7,10 +7,11 @@ var sendSocketUpdate = function(socket, action, direction, link) {
 };
 
 module.exports = function(socket, link) {
-  var left = keyboard(37),
-      up = keyboard(38),
-      right = keyboard(39),
-      down = keyboard(40);
+  var left = keyboard(37);
+  var up = keyboard(38);
+  var right = keyboard(39);
+  var down = keyboard(40);
+  var space = keyboard(32);
 
   var leftInterval, rightInterval, downInterval, upInterval;
   left.press = function() {
@@ -68,6 +69,24 @@ module.exports = function(socket, link) {
       sendSocketUpdate(socket, 'STAND', 'down', link);
     }
   };
+
+  space.press = function() {
+    switch(link.direction) {
+      case 'up':
+        actions.swingSwordUp(link);
+        break;
+      case 'down':
+        actions.swingSwordDown(link);
+        break;
+      case 'left':
+        actions.swingSwordLeft(link);
+        break;
+      case 'right':
+        actions.swingSwordRight(link);
+        break;
+    }
+  };
+  space.release = function() {};
 
   var changeScreenHandler = function() {
     [up, down, left, right].forEach(key => {
