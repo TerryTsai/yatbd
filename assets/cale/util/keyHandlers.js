@@ -68,4 +68,21 @@ module.exports = function(socket, link) {
       sendSocketUpdate(socket, 'STAND', 'down', link);
     }
   };
+
+  var changeScreenHandler = function() {
+    [up, down, left, right].forEach(key => {
+      if (key.isDown) {
+        key.release();
+      }
+      key.isDown = false;
+      key.isUp = true;
+    });
+    link.vx = 0;
+    link.vy = 0;
+  };
+
+  document.addEventListener('visibilitychange', changeScreenHandler);
+  window.onblur = function() {
+    changeScreenHandler();
+  };
 };
