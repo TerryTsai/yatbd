@@ -33,11 +33,11 @@ module.exports = function(x, y, linkTextures) {
     linkTextures['leftlink5.png'],
     linkTextures['leftlink6.png'],
     linkTextures['downlinkswordswing0.png'],
-    linkTextures['downlinkswordswing1.png'],
     linkTextures['downlinkswordswing2.png'],
-    linkTextures['downlinkswordswing3.png'],
     linkTextures['downlinkswordswing4.png'],
     linkTextures['downlinkswordswing5.png'],
+    linkTextures['downlinkswordswing3.png'],
+    linkTextures['downlinkswordswing1.png'],
     linkTextures['uplinkswordswing0.png'],
     linkTextures['uplinkswordswing1.png'],
     linkTextures['uplinkswordswing2.png'],
@@ -56,15 +56,15 @@ module.exports = function(x, y, linkTextures) {
     linkTextures['rightlinkswordswing6.png'],
     linkTextures['rightlinkswordswing7.png'],
     linkTextures['rightlinkswordswing8.png'],
+    linkTextures['leftlinkswordswing8.png'],
+    linkTextures['leftlinkswordswing7.png'],
     linkTextures['leftlinkswordswing0.png'],
     linkTextures['leftlinkswordswing1.png'],
     linkTextures['leftlinkswordswing2.png'],
     linkTextures['leftlinkswordswing3.png'],
     linkTextures['leftlinkswordswing4.png'],
     linkTextures['leftlinkswordswing5.png'],
-    linkTextures['leftlinkswordswing6.png'],
-    linkTextures['leftlinkswordswing7.png'],
-    linkTextures['leftlinkswordswing8.png']
+    linkTextures['leftlinkswordswing6.png']
   ], x, y);
   sprite.show(3);
   sprite.fps = 20;

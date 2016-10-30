@@ -1,5 +1,19 @@
 var sprite = {};
 
+var swingSword = function(char, startFrame, endFrame, standFrame, fps) {
+  char.loop = false;
+  char.fps = fps;
+  char.playAnimation([startFrame, endFrame]);
+  var waitInterval = setInterval(() => {
+    if (char.currentFrame === endFrame) {
+      clearInterval(waitInterval);
+      char.loop = true;
+      char.fps = 20;
+      char.show(standFrame);
+    }
+  });
+};
+
 sprite.walkLeft = function(char) {
   char.direction = 'left';
   char.vx = -1.5;
@@ -18,17 +32,7 @@ sprite.standLeft = function(char) {
 };
 
 sprite.swingSwordLeft = function(char) {
-  char.loop = false;
-  char.fps = 30;
-  char.playAnimation([51, 59]);
-  var waitInterval = setInterval(() => {
-    if (char.currentFrame === 59) {
-      clearInterval(waitInterval);
-      char.loop = true;
-      char.fps = 20;
-      char.show(24);
-    }
-  });
+  swingSword(char, 52, 60, 24, 33);
 };
 
 sprite.walkUp = function(char) {
@@ -47,17 +51,7 @@ sprite.standUp = function(char) {
 };
 
 sprite.swingSwordUp = function(char) {
-  char.loop = false;
-  char.fps = 30;
-  char.playAnimation([33, 41]);
-  var waitInterval = setInterval(() => {
-    if (char.currentFrame === 41) {
-      clearInterval(waitInterval);
-      char.loop = true;
-      char.fps = 20;
-      char.show(10);
-    }
-  });
+  swingSword(char, 34, 43, 10, 33);
 };
 
 sprite.walkRight = function(char) {
@@ -76,17 +70,7 @@ sprite.standRight = function(char) {
 };
 
 sprite.swingSwordRight = function(char) {
-  char.loop = false;
-  char.fps = 30;
-  char.playAnimation([42, 50]);
-  var waitInterval = setInterval(() => {
-    if (char.currentFrame === 50) {
-      clearInterval(waitInterval);
-      char.loop = true;
-      char.fps = 20;
-      char.show(17);
-    }
-  });
+  swingSword(char, 43, 52, 17, 33);
 };
 
 sprite.walkDown = function(char) {
@@ -105,17 +89,7 @@ sprite.standDown = function(char) {
 };
 
 sprite.swingSwordDown = function(char) {
-  char.loop = false;
-  char.fps = 25;
-  char.playAnimation([28, 32]);
-  var waitInterval = setInterval(() => {
-    if (char.currentFrame === 32) {
-      clearInterval(waitInterval);
-      char.loop = true;
-      char.fps = 20;
-      char.show(3);
-    }
-  });
+  swingSword(char, 28, 34, 3, 23);
 };
 
 module.exports = sprite;
