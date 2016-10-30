@@ -1,6 +1,11 @@
 var keyboard = require('./keyboard');
 var actions = require('./actions');
 
+var sendSocketUpdate = function(socket, action, direction, link) {
+  var csvString = ['s', action, direction, link.x, link.y, link.mapX, link.mapY];
+  socket.send(csvString.join(','));
+};
+
 module.exports = function(socket, link) {
   var left = keyboard(37),
       up = keyboard(38),
@@ -11,56 +16,56 @@ module.exports = function(socket, link) {
   left.press = function() {
     actions.walkLeft(link);
     leftInterval = setInterval(() => {
-      socket.send('s,MOVE,left,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'MOVE', 'left', link);
     }, 200);
   };
   left.release = function() {
     clearInterval(leftInterval);
     if (!right.isDown) {
       actions.standLeft(link);
-      socket.send('s,STAND,left,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'STAND', 'left', link);
     }
   };
 
   up.press = function() {
     actions.walkUp(link);
     upInterval = setInterval(() => {
-      socket.send('s,MOVE,up,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'MOVE', 'up', link);
     }, 200);
   };
   up.release = function() {
     clearInterval(upInterval);
     if (!down.isDown && link.vx === 0) {
       actions.standUp(link);
-      socket.send('s,STAND,up,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'STAND', 'up', link);
     }
   };
 
   right.press = function() {
     actions.walkRight(link);
     rightInterval = setInterval(() => {
-      socket.send('s,MOVE,right,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'MOVE', 'right', link);
     }, 200);
   };
   right.release = function() {
     clearInterval(rightInterval);
     if (!left.isDown && link.vy === 0) {
       actions.standRight(link);
-      socket.send('s,STAND,right,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'STAND', 'right', link);
     }
   };
 
   down.press = function() {
     actions.walkDown(link);
     downInterval = setInterval(() => {
-      socket.send('s,MOVE,down,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'MOVE', 'down', link);
     }, 200);
   };
   down.release = function() {
     clearInterval(downInterval);
     if (!up.isDown && link.vx === 0) {
       actions.standDown(link);
-      socket.send('s,STAND,down,' + link.x + ',' + link.y);
+      sendSocketUpdate(socket, 'STAND', 'down', link);
     }
   };
 };

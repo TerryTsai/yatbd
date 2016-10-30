@@ -22,13 +22,13 @@ function setup() {
   map = new PIXI.Sprite(
     PIXI.loader.resources['cale/images/kakariko.png'].texture
   );
-  map.x = -720;
-  map.y = -720;
+  map.x = 0;
+  map.y = 0;
 
   var linkTextures = PIXI.loader.resources['cale/images/links.json'].textures;
   var socket = require('./util/socket').createSocket(stage, linkTextures);
 
-  link = linkSpriteFactory(0, 0, linkTextures);
+  link = linkSpriteFactory(137, 0, linkTextures);
 
   stage.scale = new PIXI.Point(2, 2);
   stage.addChild(map);
@@ -51,9 +51,9 @@ function gameLoop() {
 function update() {
   linkUpdate.updateOwnLink(link, map);
 
-  getAll(getOtherLinks()).forEach(function(link) {
-    if (link.sprite) {
-      linkUpdate.updateOtherLink(link.sprite);
+  getAll(getOtherLinks()).forEach(function(otherLink) {
+    if (otherLink.sprite) {
+      linkUpdate.updateOtherLink(otherLink.sprite, link);
     }
   });
 }

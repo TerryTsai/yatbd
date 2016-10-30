@@ -30,6 +30,8 @@ module.exports = function(x, y, linkTextures) {
   sprite.fps = 20;
   sprite.vx = 0;
   sprite.vy = 0;
+  sprite.mapX = 0;
+  sprite.mapY = 0;
 
   return sprite;
 };

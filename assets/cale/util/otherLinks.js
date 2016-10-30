@@ -15,7 +15,9 @@ var byId = function(linkArray) {
       action: person[1],
       direction: person[2],
       x: person[3],
-      y: person[4]
+      y: person[4],
+      mapX: person[5],
+      mapY: person[6]
     };
     return accum;
   }, {});
