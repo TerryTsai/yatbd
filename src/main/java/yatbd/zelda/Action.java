@@ -1,15 +1,14 @@
-package yatbd.zelda.player;
+package yatbd.zelda;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum Action {
+enum Action {
 
-    IDLE("IDLE"),
-    MOVE_U("MOVE_U"),
-    MOVE_D("MOVE_D"),
-    MOVE_L("MOVE_L"),
-    MOVE_R("MOVE_R"),
+    MOVE_U("U"),
+    MOVE_D("D"),
+    MOVE_L("L"),
+    MOVE_R("R"),
     ;
 
     private final String text;
