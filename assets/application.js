@@ -1,4 +1,4 @@
-//function to include html files in other html files so that features can
+//function to include html files in other html files so that features can be
 //separated for easier refactoring
 function includeHTML() {
   var z, i, a, file, xhttp;

@@ -82,3 +82,15 @@ input[type=text] {
     color: transparent;
     text-shadow: 0 0 0 white;
 }
+
+.gamearea {
+  padding-top: 10%;
+}
+
+.gamearea iframe{
+  height: 360px;
+  background: white;
+  display: block;
+  margin: auto;
+  width: 50%;
+}
