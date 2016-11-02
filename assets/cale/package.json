@@ -1,0 +1,14 @@
+{
+  "name": "cale-zelda",
+  "version": "1.0.0",
+  "description": "zelda game",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^1.13.3"
+  },
+  "dependencies": {
+    "lodash": "^4.16.4",
+    "pixi.js": "^4.1.0"
+  }
+}
